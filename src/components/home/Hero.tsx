@@ -14,7 +14,7 @@ export default function Hero() {
         <Container>
           <div className="flex items-center justify-between h-20">
             <Link href="/" className="text-2xl font-bold text-white">
-              TimeStack
+              Stacked Time
             </Link>
             <Link
               href="/auth"
