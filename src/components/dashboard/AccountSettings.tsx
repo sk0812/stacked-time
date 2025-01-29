@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Eye, EyeOff, AlertCircle } from "lucide-react";
-import { useSession, signOut } from "next-auth/react";
+import { X, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { useSession } from "next-auth/react";
 import VerificationCodeInput from "@/components/auth/VerificationCodeInput";
 
 interface FormData {
@@ -27,7 +27,11 @@ interface FormSuccess {
   general?: string;
 }
 
-export default function AccountSettings() {
+interface AccountSettingsProps {
+  onClose: () => void;
+}
+
+export default function AccountSettings({ onClose }: AccountSettingsProps) {
   const { data: session, update: updateSession } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
@@ -39,19 +43,16 @@ export default function AccountSettings() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [formSuccess, setFormSuccess] = useState<FormSuccess>({});
-  const [initialValues, setInitialValues] = useState<{
-    name: string;
-    email: string;
-  }>({
-    name: "",
-    email: "",
-  });
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
+  });
+  const [initialValues, setInitialValues] = useState({
+    name: "",
+    email: "",
   });
 
   // Fetch latest user data once on mount
@@ -343,259 +344,207 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="card bg-base-100 shadow-lg">
-        <div className="card-body">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <User className="w-5 h-5" />
-              Account Settings
-            </h3>
-            <button
-              onClick={() => signOut({ callbackUrl: "/auth" })}
-              className="btn btn-error btn-sm"
-            >
-              Sign Out
-            </button>
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-bold">Account Settings</h3>
+        <button onClick={onClose} className="btn btn-sm btn-circle btn-ghost">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      {isVerifyingEmail ? (
+        <div className="space-y-4">
+          <VerificationCodeInput
+            onComplete={handleVerifyCode}
+            onResendCode={handleResendCode}
+            email={initialValues.email}
+            newEmail={formData.email}
+          />
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Full Name</span>
+            </label>
+            {isLoading ? (
+              <div className="h-12 bg-base-200 animate-pulse rounded-lg" />
+            ) : (
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    name: e.target.value,
+                  }));
+                  setFormErrors((prev) => ({ ...prev, name: undefined }));
+                }}
+                className={`input input-bordered ${
+                  formErrors.name ? "input-error" : ""
+                }`}
+                placeholder="Enter your full name"
+              />
+            )}
           </div>
 
-          {isVerifyingEmail ? (
-            <div className="space-y-4">
-              <VerificationCodeInput
-                onComplete={handleVerifyCode}
-                onResendCode={handleResendCode}
-                email={initialValues.email}
-                newEmail={formData.email}
-              />
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Full Name</span>
-                </label>
-                {isLoading ? (
-                  <div className="h-12 bg-base-200 animate-pulse rounded-lg" />
-                ) : (
-                  <>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => {
-                        setFormData((prev) => ({
-                          ...prev,
-                          name: e.target.value,
-                        }));
-                        setFormErrors((prev) => ({ ...prev, name: undefined }));
-                      }}
-                      className={`input input-bordered ${
-                        formErrors.name ? "input-error" : ""
-                      }`}
-                      placeholder="Enter your full name"
-                    />
-                  </>
-                )}
-              </div>
-
-              {/* Email */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Email Address</span>
-                </label>
-                {isLoading ? (
-                  <div className="h-12 bg-base-200 animate-pulse rounded-lg" />
-                ) : (
-                  <>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => {
-                        setFormData((prev) => ({
-                          ...prev,
-                          email: e.target.value,
-                        }));
-                        setFormErrors((prev) => ({
-                          ...prev,
-                          email: undefined,
-                        }));
-                      }}
-                      className={`input input-bordered ${
-                        formErrors.email ? "input-error" : ""
-                      }`}
-                      placeholder="Enter your email"
-                    />
-                  </>
-                )}
-              </div>
-
-              {/* Password Section */}
-              <div className="divider">Change Password</div>
-
-              {/* Current Password */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Current Password</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={showCurrentPassword ? "text" : "password"}
-                    value={formData.currentPassword}
-                    onChange={(e) => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        currentPassword: e.target.value,
-                      }));
-                      setFormErrors((prev) => ({
-                        ...prev,
-                        password: undefined,
-                      }));
-                    }}
-                    className="input input-bordered w-full pr-10"
-                    placeholder="Enter current password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-circle btn-sm"
-                  >
-                    {showCurrentPassword ? (
-                      <EyeOff size={16} />
-                    ) : (
-                      <Eye size={16} />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* New Password */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">New Password</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={showNewPassword ? "text" : "password"}
-                    value={formData.newPassword}
-                    onChange={(e) => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        newPassword: e.target.value,
-                      }));
-                      setFormErrors((prev) => ({
-                        ...prev,
-                        password: undefined,
-                      }));
-                    }}
-                    className="input input-bordered w-full pr-10"
-                    placeholder="Enter new password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-circle btn-sm"
-                  >
-                    {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Confirm New Password */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Confirm New Password</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={formData.confirmPassword}
-                    onChange={(e) => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        confirmPassword: e.target.value,
-                      }));
-                      setFormErrors((prev) => ({
-                        ...prev,
-                        password: undefined,
-                      }));
-                    }}
-                    className="input input-bordered w-full pr-10"
-                    placeholder="Confirm new password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-circle btn-sm"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff size={16} />
-                    ) : (
-                      <Eye size={16} />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className={`btn btn-primary w-full ${
-                  !hasChanges()
-                    ? "btn-disabled opacity-50 cursor-not-allowed"
-                    : ""
+          {/* Email */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Email</span>
+            </label>
+            {isLoading ? (
+              <div className="h-12 bg-base-200 animate-pulse rounded-lg" />
+            ) : (
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    email: e.target.value,
+                  }));
+                  setFormErrors((prev) => ({ ...prev, email: undefined }));
+                }}
+                className={`input input-bordered ${
+                  formErrors.email ? "input-error" : ""
                 }`}
-                disabled={!hasChanges()}
+                placeholder="Enter your email"
+              />
+            )}
+          </div>
+
+          {/* Password Section */}
+          <div className="divider">Change Password</div>
+
+          {/* Current Password */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Current Password</span>
+            </label>
+            <div className="relative">
+              <input
+                type={showCurrentPassword ? "text" : "password"}
+                value={formData.currentPassword}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    currentPassword: e.target.value,
+                  }));
+                  setFormErrors((prev) => ({ ...prev, password: undefined }));
+                }}
+                className="input input-bordered w-full pr-10"
+                placeholder="Enter current password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-circle btn-sm"
               >
-                Save Changes
+                {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
+            </div>
+          </div>
 
-              {/* All Messages */}
-              <div className="mt-6 space-y-2">
-                {/* Success Messages */}
-                {(() => {
-                  const successMessages =
-                    Object.values(formSuccess).filter(Boolean);
-                  if (successMessages.length === 0) return null;
+          {/* New Password */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">New Password</span>
+            </label>
+            <div className="relative">
+              <input
+                type={showNewPassword ? "text" : "password"}
+                value={formData.newPassword}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    newPassword: e.target.value,
+                  }));
+                  setFormErrors((prev) => ({ ...prev, password: undefined }));
+                }}
+                className="input input-bordered w-full pr-10"
+                placeholder="Enter new password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-circle btn-sm"
+              >
+                {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
 
-                  // If there's only one message, show it directly
-                  if (successMessages.length === 1) {
-                    return (
-                      <div className="text-success text-sm">
-                        <span>{successMessages[0]}</span>
-                      </div>
-                    );
-                  }
+          {/* Confirm Password */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Confirm New Password</span>
+            </label>
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                value={formData.confirmPassword}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    confirmPassword: e.target.value,
+                  }));
+                  setFormErrors((prev) => ({ ...prev, password: undefined }));
+                }}
+                className="input input-bordered w-full pr-10"
+                placeholder="Confirm new password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-circle btn-sm"
+              >
+                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
 
-                  // Combine multiple messages
-                  return (
-                    <div className="text-success text-sm">
-                      <span>Your changes have been saved successfully:</span>
-                      <ul className="list-disc list-inside mt-1 ml-2">
-                        {successMessages.map((message, index) => (
-                          <li key={index}>{message}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  );
-                })()}
+          {/* Messages */}
+          <div className="space-y-2">
+            {Object.values(formSuccess).map(
+              (message, index) =>
+                message && (
+                  <div key={index} className="text-success text-sm">
+                    {message}
+                  </div>
+                )
+            )}
+            {Object.values(formErrors).map(
+              (message, index) =>
+                message && (
+                  <div
+                    key={index}
+                    className="text-error text-sm flex items-center gap-1"
+                  >
+                    <AlertCircle size={14} />
+                    {message}
+                  </div>
+                )
+            )}
+          </div>
 
-                {/* Error Messages */}
-                {Object.entries(formErrors).map(
-                  ([key, message]) =>
-                    message && (
-                      <div
-                        key={key}
-                        className="text-error text-sm flex items-center gap-1"
-                      >
-                        <AlertCircle size={14} />
-                        <span>{message}</span>
-                      </div>
-                    )
-                )}
-              </div>
-            </form>
-          )}
-        </div>
-      </div>
+          {/* Actions */}
+          <div className="modal-action">
+            <button type="button" onClick={onClose} className="btn btn-ghost">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={!hasChanges()}
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }
