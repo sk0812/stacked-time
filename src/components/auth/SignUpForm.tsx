@@ -148,30 +148,34 @@ export default function SignUpForm() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h2 className="text-3xl font-bold text-slate-900">Create an account</h2>
-        <p className="text-slate-600">Get started with your free account</p>
+      <div className="space-y-2 text-center">
+        <h2 className="text-3xl font-bold text-slate-800">Create an account</h2>
+        <p className="text-slate-600">Start tracking time efficiently</p>
       </div>
 
       {step === "initial" && (
         <form onSubmit={handleInitialSubmit} className="space-y-4">
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Full Name</span>
+              <span className="label-text text-slate-700 font-medium">
+                Full Name
+              </span>
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="input input-bordered w-full"
-              placeholder="Enter your full name"
+              className="input input-bordered w-full bg-slate-50"
+              placeholder="John Doe"
               required
             />
           </div>
 
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Email</span>
+              <span className="label-text text-slate-700 font-medium">
+                Email
+              </span>
             </label>
             <input
               type="email"
@@ -180,8 +184,8 @@ export default function SignUpForm() {
                 setEmail(e.target.value);
                 if (error) setError("");
               }}
-              className="input input-bordered w-full"
-              placeholder="Enter your email"
+              className="input input-bordered w-full bg-slate-50"
+              placeholder="you@example.com"
               required
             />
           </div>
@@ -190,10 +194,10 @@ export default function SignUpForm() {
 
           <button
             type="submit"
-            className={`btn btn-primary w-full ${loading ? "loading" : ""}`}
+            className="btn bg-blue-600 hover:bg-blue-700 text-white w-full"
             disabled={loading}
           >
-            Create Account
+            {loading ? "Creating..." : "Continue"}
           </button>
         </form>
       )}

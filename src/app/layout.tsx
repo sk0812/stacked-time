@@ -10,8 +10,8 @@ const rubik = Rubik({
 });
 
 export const metadata: Metadata = {
-  title: "Project Time Tracker",
-  description: "Manage multiple project timers with ease",
+  title: "Stacked Time - Smart Time Tracking",
+  description: "Track time efficiently across multiple projects",
 };
 
 export default function RootLayout({
@@ -20,10 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" data-theme="emerald">
-      <body
-        className={`${inter.className} ${rubik.className} bg-background text-foreground`}
-      >
+    <html lang="en" data-theme="light">
+      <body className={`${inter.className} ${rubik.className} min-h-screen`}>
         <NextAuthProvider>{children}</NextAuthProvider>
       </body>
     </html>

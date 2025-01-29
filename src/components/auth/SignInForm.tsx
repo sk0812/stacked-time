@@ -55,14 +55,14 @@ export default function SignInForm({
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h2 className="text-3xl font-bold text-slate-900">Welcome back</h2>
-        <p className="text-slate-600">Please sign in to your account</p>
+      <div className="space-y-2 text-center">
+        <h2 className="text-3xl font-bold text-slate-800">Welcome back</h2>
+        <p className="text-slate-600">Track your time, maximize your success</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="label">
-            <span className="label-text">Email</span>
+            <span className="label-text text-slate-700 font-medium">Email</span>
           </label>
           <input
             type="email"
@@ -71,13 +71,16 @@ export default function SignInForm({
               setEmail(e.target.value);
               if (error) setError("");
             }}
-            className="input input-bordered w-full"
+            className="input input-bordered w-full bg-slate-50"
+            placeholder="you@example.com"
             required
           />
         </div>
         <div>
           <label className="label">
-            <span className="label-text">Password</span>
+            <span className="label-text text-slate-700 font-medium">
+              Password
+            </span>
           </label>
           <div className="relative">
             <input
@@ -87,22 +90,27 @@ export default function SignInForm({
                 setPassword(e.target.value);
                 if (error) setError("");
               }}
-              className="input input-bordered w-full pr-10"
+              className="input input-bordered w-full pr-10 bg-slate-50"
+              placeholder="Enter your password"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-circle btn-sm"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-800"
             >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
             </button>
           </div>
         </div>
         {error && <div className="text-error text-sm">{error}</div>}
         <button
           type="submit"
-          className="btn btn-primary w-full"
+          className="btn bg-blue-600 hover:bg-blue-700 text-white w-full"
           disabled={loading}
         >
           {loading ? "Signing in..." : "Sign in"}
@@ -110,7 +118,7 @@ export default function SignInForm({
         <button
           type="button"
           onClick={() => setShowForgotPassword(true)}
-          className="btn btn-link btn-sm w-full"
+          className="btn btn-ghost btn-sm w-full text-slate-600 hover:text-blue-600"
         >
           Forgot password?
         </button>

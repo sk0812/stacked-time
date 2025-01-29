@@ -5,28 +5,9 @@ import Container from "../ui/Container";
 
 export default function Hero() {
   return (
-    <div className="bg-gradient-to-br from-blue-600 via-indigo-700 to-blue-900 relative min-h-screen">
+    <div className="bg-gradient-to-br from-blue-600 via-indigo-700 to-blue-900 relative min-h-screen pt-20">
       {/* Overlay gradient for depth */}
       <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent"></div>
-
-      {/* Navbar integrated into hero */}
-      <div className="relative">
-        <Container>
-          <div className="flex items-center justify-between h-20">
-            <Link href="/" className="text-2xl font-bold text-white">
-              Stacked Time
-            </Link>
-            <Link
-              href="/auth"
-              className="btn btn-ghost border border-white/20 text-white hover:bg-white/10"
-            >
-              Sign In
-            </Link>
-          </div>
-        </Container>
-        {/* Divider */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-      </div>
 
       <Container className="relative">
         <div className="min-h-[calc(100vh-5rem)] grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center py-16 lg:py-24">

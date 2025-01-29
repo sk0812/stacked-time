@@ -10,7 +10,7 @@ if (!process.env.RESEND_API_KEY) {
 }
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = 'onboarding@boilerplate.com';
+const FROM_EMAIL = 'sidkheria@gmail.com';
 
 export async function POST(req: Request) {
   try {

@@ -49,9 +49,13 @@ export default function PasswordInput({ onComplete }: PasswordInputProps) {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-circle btn-sm"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-800"
           >
-            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            {showPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
@@ -72,9 +76,13 @@ export default function PasswordInput({ onComplete }: PasswordInputProps) {
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-circle btn-sm"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-800"
           >
-            {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            {showConfirmPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>

@@ -38,6 +38,16 @@ const config: Config = {
           primary: "#2563eb",    // blue-600
           secondary: "#4338ca",  // indigo-700
           accent: "#1e3a8a",     // blue-900
+          "base-100": "#ffffff",
+          "base-200": "#f1f5f9",
+          "base-300": "#e2e8f0",
+          "base-content": "#1e293b",
+          neutral: "#1e293b",
+          "neutral-content": "#f8fafc",
+          "--input-color": "#1e293b",              // Text color
+          "--input-placeholder-color": "#94a3b8",  // Placeholder color
+          "--input-border-color": "#cbd5e1",       // Border color
+          "--input-bg": "#ffffff",                 // Background color
         },
       },
     ],

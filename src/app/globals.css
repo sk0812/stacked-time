@@ -26,7 +26,16 @@
   }
   
   .input {
-    @apply px-4 py-2 rounded-lg border border-secondary focus:ring-2 focus:ring-primary focus:border-transparent outline-none;
+    @apply bg-white border-slate-300 text-slate-900 placeholder:text-slate-400;
+  }
+  
+  .input:focus {
+    @apply border-blue-500 ring-1 ring-blue-500 outline-none;
+  }
+
+  /* Style for password input eye icon */
+  .password-input-icon {
+    @apply text-slate-600 hover:text-slate-800;
   }
 }
 
