@@ -60,14 +60,18 @@ export default function Footer({ variant = "light" }: FooterProps) {
   return (
     <footer className={currentStyle.footer}>
       <div className="container mx-auto px-4">
-        <div className="h-16 flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between min-h-[4rem] py-4 sm:py-0 gap-4 sm:gap-0">
           {/* Brand */}
-          <div className={`text-lg font-semibold ${currentStyle.brand}`}>
+          <div
+            className={`text-base sm:text-lg font-semibold ${currentStyle.brand} text-center sm:text-left`}
+          >
             Stacked Time
           </div>
 
           {/* Copyright */}
-          <div className={`text-sm ${currentStyle.copyright}`}>
+          <div
+            className={`text-xs sm:text-sm ${currentStyle.copyright} text-center sm:text-left order-last sm:order-none`}
+          >
             Copyright © 2025 - All right reserved
           </div>
 
@@ -87,30 +91,36 @@ export default function Footer({ variant = "light" }: FooterProps) {
             id="feedback_modal"
             className="modal modal-bottom sm:modal-middle"
           >
-            <div className={`modal-box ${currentStyle.modal.box}`}>
+            <div
+              className={`modal-box ${currentStyle.modal.box} w-full max-w-lg mx-auto`}
+            >
               <h3
-                className={`font-bold text-lg mb-2 ${currentStyle.modal.title}`}
+                className={`font-bold text-lg mb-2 ${currentStyle.modal.title} text-center sm:text-left`}
               >
                 Share your feedback
               </h3>
-              <p className={`text-sm mb-4 ${currentStyle.modal.description}`}>
+              <p
+                className={`text-sm mb-4 ${currentStyle.modal.description} text-center sm:text-left`}
+              >
                 If you found a bug or have a feature request, please write it
                 below!
               </p>
 
               {/* Emoji Reactions */}
-              <div className="flex gap-4 justify-center mb-6">
+              <div className="flex flex-wrap sm:flex-nowrap justify-center gap-3 sm:gap-4 mb-6">
                 {reactions.map((reaction) => (
                   <button
                     key={reaction.label}
                     onClick={() => setSelectedReaction(reaction.label)}
-                    className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all ${
+                    className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all flex-1 sm:flex-initial ${
                       selectedReaction === reaction.label
                         ? currentStyle.modal.reactionButtonActive
                         : currentStyle.modal.reactionButton
                     }`}
                   >
-                    <span className="text-2xl">{reaction.emoji}</span>
+                    <span className="text-xl sm:text-2xl">
+                      {reaction.emoji}
+                    </span>
                     <span
                       className={`text-xs ${currentStyle.modal.description}`}
                     >
@@ -122,22 +132,25 @@ export default function Footer({ variant = "light" }: FooterProps) {
 
               <div className="py-4">
                 <textarea
-                  className={`textarea textarea-bordered w-full h-32 ${currentStyle.modal.input}`}
+                  className={`textarea textarea-bordered w-full h-24 sm:h-32 ${currentStyle.modal.input}`}
                   placeholder={`Tell us what you think...${
                     selectedReaction ? `\nType: ${selectedReaction}` : ""
                   }`}
                 />
               </div>
-              <div className="modal-action">
-                <form method="dialog" className="flex gap-2">
+              <div className="modal-action flex-col-reverse sm:flex-row gap-3 sm:gap-2">
+                <form
+                  method="dialog"
+                  className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto"
+                >
                   <button
-                    className={`btn btn-ghost ${currentStyle.modal.cancelButton}`}
+                    className={`btn btn-ghost ${currentStyle.modal.cancelButton} w-full sm:w-auto order-last sm:order-first`}
                     onClick={() => setSelectedReaction(null)}
                   >
                     Cancel
                   </button>
                   <button
-                    className={`btn ${currentStyle.modal.submitButton} border-none`}
+                    className={`btn ${currentStyle.modal.submitButton} border-none w-full sm:w-auto`}
                     disabled={!selectedReaction}
                   >
                     Send Feedback
@@ -146,7 +159,7 @@ export default function Footer({ variant = "light" }: FooterProps) {
               </div>
             </div>
             <form method="dialog" className="modal-backdrop">
-              <button onClick={() => setSelectedReaction(null)}>close</button>
+              <button>close</button>
             </form>
           </dialog>
         </div>

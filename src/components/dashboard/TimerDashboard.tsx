@@ -341,12 +341,12 @@ export default function TimerDashboard() {
   return (
     <div className="space-y-6">
       {/* Header with Filters */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex flex-col sm:flex-row gap-4">
+      <div className="space-y-4 sm:space-y-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           {/* Status Filters - Matched height with category filter */}
-          <div className="tabs tabs-boxed bg-slate-800/80 p-1.5 rounded-lg h-[48px] flex items-center">
+          <div className="tabs tabs-boxed bg-slate-800/80 p-1.5 rounded-lg h-[48px] flex items-center overflow-x-auto hide-scrollbar">
             <button
-              className={`tab h-full px-4 transition-colors duration-200 font-medium ${
+              className={`tab h-full px-4 transition-colors duration-200 font-medium whitespace-nowrap ${
                 activeFilter === "all"
                   ? "bg-slate-700 text-white"
                   : "text-slate-300 hover:text-white hover:bg-slate-700/50"
@@ -356,7 +356,7 @@ export default function TimerDashboard() {
               All Timers
             </button>
             <button
-              className={`tab h-full px-4 transition-colors duration-200 font-medium ${
+              className={`tab h-full px-4 transition-colors duration-200 font-medium whitespace-nowrap ${
                 activeFilter === "running"
                   ? "bg-emerald-500/20 text-emerald-200"
                   : "text-slate-300 hover:text-white hover:bg-slate-700/50"
@@ -366,7 +366,7 @@ export default function TimerDashboard() {
               Running
             </button>
             <button
-              className={`tab h-full px-4 transition-colors duration-200 font-medium ${
+              className={`tab h-full px-4 transition-colors duration-200 font-medium whitespace-nowrap ${
                 activeFilter === "paused"
                   ? "bg-amber-500/20 text-amber-200"
                   : "text-slate-300 hover:text-white hover:bg-slate-700/50"
@@ -376,7 +376,7 @@ export default function TimerDashboard() {
               Paused
             </button>
             <button
-              className={`tab h-full px-4 transition-colors duration-200 font-medium ${
+              className={`tab h-full px-4 transition-colors duration-200 font-medium whitespace-nowrap ${
                 activeFilter === "finished"
                   ? "bg-blue-500/20 text-blue-200"
                   : "text-slate-300 hover:text-white hover:bg-slate-700/50"
@@ -388,10 +388,10 @@ export default function TimerDashboard() {
           </div>
 
           {/* Category Filter Dropdown */}
-          <div className="dropdown">
+          <div className="dropdown w-full sm:w-auto">
             <label
               tabIndex={0}
-              className="btn h-[48px] bg-slate-800/80 border-slate-700 text-slate-200 hover:bg-slate-700 gap-2 font-medium min-w-[200px] justify-start px-4"
+              className="btn h-[48px] bg-slate-800/80 border-slate-700 text-slate-200 hover:bg-slate-700 gap-2 font-medium w-full sm:min-w-[200px] justify-start px-4"
             >
               <Tag className="w-5 h-5" />
               <span className="text-base text-slate-200 flex items-center gap-2">
@@ -414,7 +414,7 @@ export default function TimerDashboard() {
             </label>
             <ul
               tabIndex={0}
-              className="dropdown-content z-[1] menu p-3 shadow-xl bg-slate-800/95 backdrop-blur-sm rounded-box w-[200px] mt-2 border border-slate-700"
+              className="dropdown-content z-[1] menu p-3 shadow-xl bg-slate-800/95 backdrop-blur-sm rounded-box w-full sm:w-[200px] mt-2 border border-slate-700"
             >
               <li>
                 <button
@@ -459,7 +459,7 @@ export default function TimerDashboard() {
         </div>
 
         <button
-          className="btn btn-lg btn-primary gap-2"
+          className="btn btn-lg btn-primary gap-2 w-full sm:w-auto"
           onClick={() => setIsAddModalOpen(true)}
         >
           <Clock className="w-5 h-5" />
@@ -491,7 +491,7 @@ export default function TimerDashboard() {
           filteredTimers.map((timer) => (
             <div
               key={timer._id}
-              className={`rounded-xl border p-5 ${
+              className={`rounded-xl border p-4 sm:p-5 ${
                 timer.status === "running"
                   ? "bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border-blue-500/20"
                   : timer.status === "finished"
@@ -499,9 +499,9 @@ export default function TimerDashboard() {
                   : "bg-slate-800/50 border-slate-700/50"
               }`}
             >
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-3 mb-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2 sm:gap-0">
+                <div className="space-y-2 sm:space-y-0">
+                  <div className="flex items-center gap-3 mb-1 flex-wrap sm:flex-nowrap">
                     {timer.categoryId && (
                       <div className="flex items-center gap-2">
                         <div
@@ -543,7 +543,7 @@ export default function TimerDashboard() {
                   </div>
                 </div>
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium border ${
+                  className={`px-3 py-1 rounded-full text-xs font-medium border w-fit ${
                     timer.status === "running"
                       ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
                       : timer.status === "finished"
@@ -554,15 +554,15 @@ export default function TimerDashboard() {
                   {timer.status.charAt(0).toUpperCase() + timer.status.slice(1)}
                 </span>
               </div>
-              <div className="flex items-end justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 sm:gap-0">
                 <div
-                  className={`font-mono text-4xl font-bold tracking-wider ${
+                  className={`font-mono text-3xl sm:text-4xl font-bold tracking-wider ${
                     timer.status === "running" ? "text-white" : "text-slate-300"
                   }`}
                 >
                   {formatTime(timer.time)}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto">
                   {timer.status !== "finished" && (
                     <button
                       onClick={() => {
@@ -572,7 +572,7 @@ export default function TimerDashboard() {
                           startTimer(timer._id, timer.time);
                         }
                       }}
-                      className={`h-8 w-16 rounded flex items-center justify-center text-sm ${
+                      className={`h-8 flex-1 sm:w-16 sm:flex-none rounded flex items-center justify-center text-sm ${
                         timer.status === "running"
                           ? "bg-red-500/20 text-red-200 hover:bg-red-500/30"
                           : "bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500/30"
@@ -584,7 +584,7 @@ export default function TimerDashboard() {
                   {timer.status === "paused" && (
                     <button
                       onClick={() => finishTimer(timer._id, timer.time)}
-                      className="h-8 w-16 bg-slate-700/30 hover:bg-slate-700/50 rounded flex items-center justify-center text-slate-300 text-sm"
+                      className="h-8 flex-1 sm:w-16 sm:flex-none bg-slate-700/30 hover:bg-slate-700/50 rounded flex items-center justify-center text-slate-300 text-sm"
                     >
                       Finish
                     </button>
@@ -596,7 +596,7 @@ export default function TimerDashboard() {
                         setSelectedTimer(timer);
                         setIsLogsModalOpen(true);
                       }}
-                      className="h-8 px-3 bg-slate-700/30 hover:bg-slate-700/50 rounded flex items-center gap-1.5 justify-center text-slate-300 text-sm"
+                      className="h-8 flex-1 sm:w-auto sm:flex-none px-3 bg-slate-700/30 hover:bg-slate-700/50 rounded flex items-center gap-1.5 justify-center text-slate-300 text-sm"
                     >
                       <ClipboardList className="w-3.5 h-3.5" />
                       Logs

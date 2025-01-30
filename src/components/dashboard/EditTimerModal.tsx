@@ -79,122 +79,123 @@ export default function EditTimerModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div className="relative w-full max-w-lg bg-slate-900 rounded-xl shadow-xl border border-slate-800 p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-white">Edit Timer</h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-200 text-sm">
-              {error}
-            </div>
-          )}
-
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text text-slate-200">Project Name</span>
-            </label>
-            <input
-              type="text"
-              className={`input input-bordered bg-slate-800/50 border-slate-700 text-white ${
-                errors.projectName ? "input-error" : ""
-              }`}
-              placeholder="Enter project name"
-              {...register("projectName", {
-                required: "Project name is required",
-              })}
-            />
-            {errors.projectName && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.projectName.message}
-                </span>
-              </label>
-            )}
-          </div>
-
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text text-slate-200">Description</span>
-            </label>
-            <textarea
-              className={`textarea textarea-bordered bg-slate-800/50 border-slate-700 text-white min-h-[100px] ${
-                errors.description ? "textarea-error" : ""
-              }`}
-              placeholder="Enter project description"
-              {...register("description", {
-                required: "Description is required",
-              })}
-            />
-            {errors.description && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.description.message}
-                </span>
-              </label>
-            )}
-          </div>
-
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text text-slate-200">Category</span>
-            </label>
-            <select
-              className="select select-bordered bg-slate-800/50 border-slate-700 text-white"
-              {...register("categoryId")}
-              defaultValue={timer.categoryId}
-            >
-              <option value="">No Category</option>
-              {categories.map((category) => (
-                <option key={category._id} value={category._id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex justify-end gap-3 mt-6">
+    <dialog
+      id="edit_timer_modal"
+      className={`modal modal-bottom sm:modal-middle ${
+        isOpen ? "modal-open" : ""
+      }`}
+    >
+      <div className="modal-box max-h-[90vh] sm:max-h-[85vh] w-full max-w-lg">
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-white">Edit Timer</h3>
             <button
-              type="button"
               onClick={onClose}
-              className="btn btn-ghost text-slate-300"
+              className="btn btn-ghost btn-sm p-0 hover:bg-transparent"
             >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn btn-primary"
-            >
-              {isSubmitting ? (
-                <span className="loading loading-spinner loading-sm" />
-              ) : (
-                "Save Changes"
-              )}
+              <X className="w-5 h-5 text-slate-400 hover:text-white transition-colors" />
             </button>
           </div>
-        </form>
+
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col flex-1"
+          >
+            <div className="space-y-4 flex-1">
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-200 text-sm">
+                  {error}
+                </div>
+              )}
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-slate-200">
+                    Project Name
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter project name"
+                  className="input input-bordered bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
+                  {...register("projectName", {
+                    required: "Project name is required",
+                  })}
+                />
+                {errors.projectName && (
+                  <label className="label">
+                    <span className="label-text-alt text-error">
+                      {errors.projectName.message}
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-slate-200">Description</span>
+                </label>
+                <textarea
+                  placeholder="Enter description"
+                  className="textarea textarea-bordered bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 min-h-[100px]"
+                  {...register("description", {
+                    required: "Description is required",
+                  })}
+                />
+                {errors.description && (
+                  <label className="label">
+                    <span className="label-text-alt text-error">
+                      {errors.description.message}
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-slate-200">Category</span>
+                </label>
+                <select
+                  className="select select-bordered bg-slate-800/50 border-slate-700 text-white"
+                  {...register("categoryId")}
+                  defaultValue={timer.categoryId}
+                >
+                  <option value="">No Category</option>
+                  {categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2 mt-6">
+              <button
+                type="button"
+                className="btn btn-ghost order-2 sm:order-1 w-full"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary order-1 sm:order-2 w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  "Save Changes"
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+      <form method="dialog" className="modal-backdrop">
+        <button onClick={onClose}>close</button>
+      </form>
+    </dialog>
   );
 }
