@@ -32,7 +32,7 @@ interface AccountSettingsProps {
 }
 
 export default function AccountSettings({ onClose }: AccountSettingsProps) {
-  const { data: session, update: updateSession } = useSession();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
   const [verificationToken, setVerificationToken] = useState<string | null>(

@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import VerificationCode from '@/models/VerificationCode';
 
+interface VerificationQuery {
+  email: string;
+  code: string;
+  token: string;
+  newEmail?: string;
+}
+
 export async function POST(req: Request) {
   try {
     const { email, newEmail, code, token } = await req.json();
@@ -20,7 +27,7 @@ export async function POST(req: Request) {
     console.log('Verifying code:', { email, newEmail, code, token });
 
     // Build query based on available data
-    const query: any = {
+    const query: VerificationQuery = {
       email,
       code,
       token,

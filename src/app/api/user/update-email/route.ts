@@ -3,7 +3,14 @@ import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
 import VerificationCode from '@/models/VerificationCode';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
+
+interface VerificationQuery {
+  email: string;
+  code: string;
+  token: string;
+  newEmail?: string;
+}
 
 export async function PUT(req: Request) {
   try {
@@ -28,7 +35,7 @@ export async function PUT(req: Request) {
     await connectToDatabase();
 
     // Build query based on available data
-    const query: any = {
+    const query: VerificationQuery = {
       email: currentEmail,
       code,
       token,

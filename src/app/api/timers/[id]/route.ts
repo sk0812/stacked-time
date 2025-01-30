@@ -2,16 +2,13 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import Timer from '@/models/Timer';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
-
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
+import { authOptions } from '@/lib/auth';
 
 // PATCH /api/timers/[id] - Update timer status and time
-export async function PATCH(req: Request, { params }: RouteParams) {
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -19,7 +16,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
     }
 
     const { id } = await params;
-    const body = await req.json();
+    const body = await request.json();
     
     await connectToDatabase();
 
@@ -59,7 +56,10 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 }
 
 // DELETE /api/timers/[id] - Delete a timer
-export async function DELETE(req: Request, { params }: RouteParams) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -86,4 +86,4 @@ export async function DELETE(req: Request, { params }: RouteParams) {
       { status: 500 }
     );
   }
-} 
+}

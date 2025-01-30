@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Container from "../ui/Container";
 
 export default function Hero() {
@@ -158,7 +157,7 @@ export default function Hero() {
                     {/* Today's Date */}
                     <div className="flex items-center justify-between mb-4 sm:mb-6">
                       <h2 className="text-slate-200 text-base sm:text-lg font-medium">
-                        Today's Timers
+                        Today&apos;s Timers
                       </h2>
                       <span className="text-slate-400 text-xs sm:text-sm">
                         Mon, 18 March

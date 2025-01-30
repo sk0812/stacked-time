@@ -35,10 +35,14 @@ export async function POST(req: Request) {
       password: hashedPassword
     });
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user.toObject();
+    // Convert to object and remove sensitive data
+    const userResponse = {
+      _id: user._id,
+      name: user.name,
+      email: user.email
+    };
 
-    return NextResponse.json(userWithoutPassword);
+    return NextResponse.json(userResponse);
   } catch (error) {
     console.error('Error registering user:', error);
     return NextResponse.json(

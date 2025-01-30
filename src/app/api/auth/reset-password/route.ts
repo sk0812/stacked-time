@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Update the user's password
-    const updatedUser = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { email },
       { password: hashedPassword },
       { new: true }

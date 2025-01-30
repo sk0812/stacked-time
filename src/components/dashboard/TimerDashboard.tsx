@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Clock,
   Plus,
@@ -48,21 +48,44 @@ export default function TimerDashboard() {
   const [timerToEdit, setTimerToEdit] = useState<Timer | null>(null);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
 
-  // Add new state for tracking intervals
-  const [runningTimers, setRunningTimers] = useState<{
-    [key: string]: NodeJS.Timeout;
-  }>({});
+  // Use ref instead of state for intervals to prevent re-renders
+  const intervalsRef = useRef<{ [key: string]: NodeJS.Timeout }>({});
 
   // Cleanup intervals on unmount
   useEffect(() => {
     return () => {
-      Object.values(runningTimers).forEach((interval) =>
+      Object.values(intervalsRef.current).forEach((interval) =>
         clearInterval(interval)
       );
     };
-  }, [runningTimers]);
+  }, []);
+
+  // Start intervals for running timers and handle page refresh
+  useEffect(() => {
+    // Clear all existing intervals first
+    Object.values(intervalsRef.current).forEach((interval) =>
+      clearInterval(interval)
+    );
+    intervalsRef.current = {};
+
+    // Start new intervals for all running timers
+    timers.forEach((timer) => {
+      if (timer.status === "running") {
+        const interval = setInterval(() => {
+          setTimers((prev) =>
+            prev.map((t) =>
+              t._id === timer._id ? { ...t, time: t.time + 1 } : t
+            )
+          );
+        }, 1000);
+
+        intervalsRef.current[timer._id] = interval;
+      }
+    });
+
+    // No cleanup needed here as it's handled in the unmount effect
+  }, [timers]);
 
   // Calculate elapsed time for running timers
   const calculateElapsedTime = useCallback((timer: Timer) => {
@@ -75,7 +98,7 @@ export default function TimerDashboard() {
     return timer.time + elapsedSeconds;
   }, []);
 
-  const fetchTimers = async () => {
+  const fetchTimers = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -99,7 +122,7 @@ export default function TimerDashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [calculateElapsedTime]);
 
   const fetchCategories = async () => {
     try {
@@ -111,15 +134,13 @@ export default function TimerDashboard() {
       setCategories(data);
     } catch (err) {
       console.error("Error fetching categories:", err);
-    } finally {
-      setIsCategoriesLoading(false);
     }
   };
 
   useEffect(() => {
     fetchTimers();
     fetchCategories();
-  }, []);
+  }, [fetchTimers]);
 
   const formatTime = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
@@ -140,70 +161,36 @@ export default function TimerDashboard() {
   const getCategory = (categoryId?: string) =>
     categories.find((cat) => cat._id === categoryId);
 
-  const updateTimer = async (
-    timerId: string,
-    status: TimerStatus,
-    currentTime: number
-  ) => {
-    try {
-      const response = await fetch(`/api/timers/${timerId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          status,
-          time: currentTime,
-        }),
-      });
+  const updateTimer = useCallback(
+    async (timerId: string, status: TimerStatus, currentTime: number) => {
+      try {
+        const response = await fetch(`/api/timers/${timerId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status,
+            time: currentTime,
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to update timer");
+        if (!response.ok) {
+          throw new Error("Failed to update timer");
+        }
+
+        // Only fetch timers if the update was successful
+        await fetchTimers();
+      } catch (err) {
+        console.error("Error updating timer:", err);
+        setError(err instanceof Error ? err.message : "Failed to update timer");
+
+        // Revert the timer state on error
+        await fetchTimers();
       }
-
-      // Only fetch timers if the update was successful
-      await fetchTimers();
-    } catch (err) {
-      console.error("Error updating timer:", err);
-      setError(err instanceof Error ? err.message : "Failed to update timer");
-
-      // Revert the timer state on error
-      await fetchTimers();
-    }
-  };
-
-  // Start intervals for running timers and handle page refresh
-  useEffect(() => {
-    // Clear all existing intervals first
-    Object.values(runningTimers).forEach((interval) => clearInterval(interval));
-    setRunningTimers({});
-
-    // Start new intervals for all running timers
-    const newRunningTimers: { [key: string]: NodeJS.Timeout } = {};
-
-    timers.forEach((timer) => {
-      if (timer.status === "running") {
-        const interval = setInterval(() => {
-          setTimers((prev) =>
-            prev.map((t) =>
-              t._id === timer._id ? { ...t, time: t.time + 1 } : t
-            )
-          );
-        }, 1000);
-
-        newRunningTimers[timer._id] = interval;
-      }
-    });
-
-    setRunningTimers(newRunningTimers);
-
-    // Cleanup function
-    return () => {
-      Object.values(newRunningTimers).forEach((interval) =>
-        clearInterval(interval)
-      );
-    };
-  }, [timers.map((t) => t.status).join(",")]); // Only re-run when timer statuses change
+    },
+    [fetchTimers]
+  );
 
   const startTimer = useCallback(
     async (timerId: string, currentTime: number) => {
@@ -243,30 +230,25 @@ export default function TimerDashboard() {
         }, 1000);
 
         // Save interval reference
-        setRunningTimers((prev) => ({
-          ...prev,
-          [timerId]: interval,
-        }));
+        intervalsRef.current[timerId] = interval;
       } catch (err) {
         console.error("Error starting timer:", err);
         setError(err instanceof Error ? err.message : "Failed to start timer");
         await fetchTimers(); // Refresh timer state on error
       }
     },
-    []
+    [fetchTimers]
   );
 
   const stopTimer = useCallback(
     async (timerId: string, currentTime: number) => {
       try {
         // Clear interval first
-        if (runningTimers[timerId]) {
-          clearInterval(runningTimers[timerId]);
-          setRunningTimers((prev) => {
-            const newTimers = { ...prev };
-            delete newTimers[timerId];
-            return newTimers;
-          });
+        if (intervalsRef.current[timerId]) {
+          clearInterval(intervalsRef.current[timerId]);
+          const newIntervals = { ...intervalsRef.current };
+          delete newIntervals[timerId];
+          intervalsRef.current = newIntervals;
         }
 
         // Update timer status in database
@@ -299,25 +281,23 @@ export default function TimerDashboard() {
         await fetchTimers(); // Refresh timer state on error
       }
     },
-    [runningTimers]
+    [fetchTimers]
   );
 
   const finishTimer = useCallback(
     (timerId: string, currentTime: number) => {
       // Clear interval
-      if (runningTimers[timerId]) {
-        clearInterval(runningTimers[timerId]);
-        setRunningTimers((prev) => {
-          const newTimers = { ...prev };
-          delete newTimers[timerId];
-          return newTimers;
-        });
+      if (intervalsRef.current[timerId]) {
+        clearInterval(intervalsRef.current[timerId]);
+        const newIntervals = { ...intervalsRef.current };
+        delete newIntervals[timerId];
+        intervalsRef.current = newIntervals;
       }
 
       // Update timer status in database
       updateTimer(timerId, "finished", currentTime);
     },
-    [runningTimers]
+    [updateTimer]
   );
 
   const deleteTimer = useCallback(async (timerId: string) => {

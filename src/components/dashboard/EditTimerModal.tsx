@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Clock, X } from "lucide-react";
+import { X } from "lucide-react";
 
 interface EditTimerModalProps {
   isOpen: boolean;

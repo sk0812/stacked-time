@@ -12,6 +12,13 @@ if (!process.env.RESEND_API_KEY) {
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = 'sidkheria@gmail.com';
 
+interface VerificationData {
+  email: string;
+  code: string;
+  token: string;
+  newEmail?: string;
+}
+
 export async function POST(req: Request) {
   try {
     const { email, newEmail, name } = await req.json();
@@ -46,7 +53,7 @@ export async function POST(req: Request) {
     await VerificationCode.deleteMany({ email });
 
     // Create verification record data
-    const verificationData: any = {
+    const verificationData: VerificationData = {
       email,
       code,
       token,

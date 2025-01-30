@@ -1,6 +1,5 @@
 "use client";
 
-import { MessageSquarePlus } from "lucide-react";
 import { useState } from "react";
 
 const reactions = [
@@ -79,7 +78,7 @@ export default function Footer({ variant = "light" }: FooterProps) {
           <button
             className={`btn btn-ghost btn-sm ${currentStyle.button}`}
             onClick={() => {
-              // @ts-ignore
+              // @ts-expect-error showModal is available on HTMLDialogElement
               document.getElementById("feedback_modal").showModal();
             }}
           >

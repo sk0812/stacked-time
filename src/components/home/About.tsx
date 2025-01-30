@@ -1,6 +1,5 @@
 import Container from "../ui/Container";
 import { Clock, Layers, CloudSun } from "lucide-react";
-import Footer from "../layout/Footer";
 
 const features = [
   {
@@ -95,8 +94,8 @@ export default function About() {
                   Ready to maximize your productivity?
                 </h2>
                 <p className="text-sm sm:text-base text-slate-600 mb-6">
-                  Join thousands of professionals who've already streamlined
-                  their time tracking.
+                  Join thousands of professionals who&apos;ve already
+                  streamlined their time tracking.
                 </p>
                 <div className="card-actions">
                   <button className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white border-none text-sm sm:text-base px-6 sm:px-8">

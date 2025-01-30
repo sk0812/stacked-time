@@ -41,7 +41,7 @@ export default function ForgotPasswordForm({
       } else {
         setError(result.error || "Failed to send verification code");
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -68,7 +68,7 @@ export default function ForgotPasswordForm({
         const data = await response.json();
         setError(data.error || "Invalid verification code");
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -89,12 +89,12 @@ export default function ForgotPasswordForm({
       if (result.success) {
         setVerificationToken(result.token);
         setSuccess("Verification code sent successfully");
-        setTimeout(() => setSuccess(""), 3000); // Clear success message after 3 seconds
+        setTimeout(() => setSuccess(""), 3000);
         return result.token;
       }
       setError(result.error || "Failed to resend code");
       return null;
-    } catch (error) {
+    } catch {
       setError("An error occurred. Please try again.");
       return null;
     } finally {
@@ -123,12 +123,12 @@ export default function ForgotPasswordForm({
           "Password reset successful! You can now sign in with your new password. Redirecting..."
         );
         setTimeout(() => {
-          onBack(); // Return to sign in tab after showing success message
+          onBack();
         }, 2000);
       } else {
         setError(result.error || "Failed to reset password");
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -141,7 +141,7 @@ export default function ForgotPasswordForm({
         <div className="space-y-2">
           <h2 className="text-3xl font-bold text-slate-900">Verify Email</h2>
           <p className="text-slate-600">
-            We've sent a verification code to your email
+            We&apos;ve sent a verification code to your email
           </p>
         </div>
         <div className="space-y-4">
@@ -252,8 +252,9 @@ export default function ForgotPasswordForm({
     <div className="space-y-6">
       <div className="space-y-2">
         <h2 className="text-3xl font-bold text-slate-900">Forgot Password</h2>
-        <p className="text-slate-600">
-          Enter your email to receive a verification code
+        <p className="text-sm text-slate-400 mb-6">
+          Don&apos;t worry! It happens. Please enter the email address
+          associated with your account.
         </p>
       </div>
       <form
