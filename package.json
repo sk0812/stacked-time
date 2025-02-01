@@ -12,6 +12,7 @@
   "dependencies": {
     "@auth/core": "^0.37.4",
     "@auth/mongodb-adapter": "^3.7.4",
+    "@vercel/analytics": "^1.4.1",
     "bcryptjs": "^2.4.3",
     "daisyui": "^4.12.23",
     "dotenv": "^16.4.7",
