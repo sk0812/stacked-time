@@ -10,8 +10,8 @@
     "seed": "node scripts/seed.js"
   },
   "dependencies": {
-    "@auth/core": "^0.37.4",
-    "@auth/mongodb-adapter": "^3.7.4",
+    "@auth/core": "0.34.2",
+    "@auth/mongodb-adapter": "^1.0.0",
     "@vercel/analytics": "^1.4.1",
     "bcryptjs": "^2.4.3",
     "daisyui": "^4.12.23",
