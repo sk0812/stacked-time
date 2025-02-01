@@ -13,6 +13,10 @@ const rubik = Rubik({
 export const metadata: Metadata = {
   title: "Stacked Time - Smart Time Tracking",
   description: "Track time efficiently across multiple projects",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({

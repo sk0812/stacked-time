@@ -14,6 +14,10 @@ interface FooterProps {
 
 export default function Footer({ variant = "light" }: FooterProps) {
   const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const styles = {
     light: {
@@ -55,6 +59,54 @@ export default function Footer({ variant = "light" }: FooterProps) {
   };
 
   const currentStyle = styles[variant];
+
+  const handleSubmit = async () => {
+    if (!selectedReaction || !message.trim()) {
+      setError("Please select a reaction and write a message");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reaction: selectedReaction,
+          message: message.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to send feedback");
+      }
+
+      setSuccess(true);
+      setMessage("");
+      setSelectedReaction(null);
+
+      // Close the modal after 2 seconds
+      setTimeout(() => {
+        // @ts-expect-error close is available on HTMLDialogElement
+        document.getElementById("feedback_modal").close();
+        setSuccess(false);
+      }, 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send feedback");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleClose = () => {
+    setSelectedReaction(null);
+    setMessage("");
+    setError(null);
+    setSuccess(false);
+  };
 
   return (
     <footer className={currentStyle.footer}>
@@ -110,7 +162,10 @@ export default function Footer({ variant = "light" }: FooterProps) {
                 {reactions.map((reaction) => (
                   <button
                     key={reaction.label}
-                    onClick={() => setSelectedReaction(reaction.label)}
+                    onClick={() => {
+                      setSelectedReaction(reaction.label);
+                      setError(null);
+                    }}
                     className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all flex-1 sm:flex-initial ${
                       selectedReaction === reaction.label
                         ? currentStyle.modal.reactionButtonActive
@@ -129,36 +184,64 @@ export default function Footer({ variant = "light" }: FooterProps) {
                 ))}
               </div>
 
+              {/* Message Input */}
               <div className="py-4">
                 <textarea
                   className={`textarea textarea-bordered w-full h-24 sm:h-32 ${currentStyle.modal.input}`}
                   placeholder={`Tell us what you think...${
                     selectedReaction ? `\nType: ${selectedReaction}` : ""
                   }`}
+                  value={message}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    setError(null);
+                  }}
                 />
               </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-200 text-sm mb-4">
+                  {error}
+                </div>
+              )}
+
+              {/* Success Message */}
+              {success && (
+                <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-green-200 text-sm mb-4">
+                  Thank you for your feedback! We'll look into it.
+                </div>
+              )}
+
               <div className="modal-action flex-col-reverse sm:flex-row gap-3 sm:gap-2">
                 <form
                   method="dialog"
                   className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto"
                 >
                   <button
+                    type="button"
                     className={`btn btn-ghost ${currentStyle.modal.cancelButton} w-full sm:w-auto order-last sm:order-first`}
-                    onClick={() => setSelectedReaction(null)}
+                    onClick={handleClose}
                   >
                     Cancel
                   </button>
                   <button
+                    type="button"
                     className={`btn ${currentStyle.modal.submitButton} border-none w-full sm:w-auto`}
-                    disabled={!selectedReaction}
+                    disabled={isSubmitting || !selectedReaction}
+                    onClick={handleSubmit}
                   >
-                    Send Feedback
+                    {isSubmitting ? (
+                      <span className="loading loading-spinner loading-sm" />
+                    ) : (
+                      "Send Feedback"
+                    )}
                   </button>
                 </form>
               </div>
             </div>
             <form method="dialog" className="modal-backdrop">
-              <button>close</button>
+              <button onClick={handleClose}>close</button>
             </form>
           </dialog>
         </div>
