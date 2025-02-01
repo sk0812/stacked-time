@@ -209,7 +209,7 @@ export default function Footer({ variant = "light" }: FooterProps) {
               {/* Success Message */}
               {success && (
                 <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-green-200 text-sm mb-4">
-                  Thank you for your feedback! We'll look into it.
+                  Thank you for your feedback! We&apos;ll look into it.
                 </div>
               )}
 

@@ -6,7 +6,7 @@ if (!process.env.RESEND_API_KEY) {
 }
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = 'stackedtime@focusmaths.com';
+const FROM_EMAIL = 'hello@stackedtime.com';
 const TO_EMAIL = 'sidkheria@gmail.com'; // Replace with your email
 
 export async function POST(req: Request) {
